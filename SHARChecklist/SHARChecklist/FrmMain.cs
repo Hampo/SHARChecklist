@@ -117,7 +117,8 @@ namespace SHARChecklist
         {
             Process p = null;
             SHARMemory SHARMem = null;
-            uint LevelCount = 7u;
+            byte LevelCount = 7;
+            bool IncreasedRewardLimits = false;
             while (true)
             {
                 if (p == null)
@@ -132,7 +133,8 @@ namespace SHARChecklist
                         {
                             p = SHAR;
                             SHARMem = new SHARMemory(p);
-                            LevelCount = SHARMem.LevelCount();
+                            LevelCount = SHARMem.LevelCount;
+                            IncreasedRewardLimits = SHARMem.IsHackLoaded("IncreasedRewardLimits");
                         }
                         else
                         {
@@ -172,42 +174,80 @@ namespace SHARChecklist
                             uint gagsTotal = 0;
                             float levelsTotal = 0f;
                             uint moviesTotal;
+
                             float[] waspTotals = new float[LevelCount];
                             float[] gagTotals = new float[LevelCount];
+                            float[] clothingTotals = new float[LevelCount];
+                            float[] vehicleTotals = new float[LevelCount];
                             for (uint i = 0; i < LevelCount; i++)
                             {
                                 waspTotals[i] = SHARMem.WaspTotal(i);
                                 gagTotals[i] = SHARMem.GagTotal(i);
+                                if (IncreasedRewardLimits)
+                                {
+                                    //TODO: Support this. Inject code?
+                                    clothingTotals[i] = 0;
+                                    vehicleTotals[i] = 0;
+                                }
+                                else
+                                {
+                                    uint MerchandiseCount = SHARMem.MerchandiseCount(i);
+                                    float clothingTotal = 0;
+                                    float vehicleTotal = 0;
+                                    for (uint j = 0; j < MerchandiseCount; j++)
+                                    {
+                                        switch (SHARMem.MerchandiseType(SHARMem.MerchandiseIndex(i, j)))
+                                        {
+                                            case SHARMemory.RewardType.SkinOther:
+                                                clothingTotal++;
+                                                break;
+                                            case SHARMemory.RewardType.Car:
+                                                vehicleTotal++;
+                                                break;
+                                        }
+                                    }
+                                    clothingTotals[i] = clothingTotal;
+                                    vehicleTotals[i] = vehicleTotal;
+                                }
                             }
+
                             LblStoryMissionsTotal.Text = $"/{LevelCount * 7}";
                             LblBonusMissionsTotal.Text = $"/{LevelCount}";
                             LblStreetRacesTotal.Text = $"/{LevelCount * 3}";
                             LblCollectorCardsTotal.Text = $"/{LevelCount * 7}";
-                            LblCharacterClothingTotal.Text = $"/{LevelCount * 3}";
-                            LblVehiclesTotal.Text = $"/{LevelCount * 5}";
+                            LblCharacterClothingTotal.Text = $"/{(int)clothingTotals.Sum()}";
+                            LblVehiclesTotal.Text = $"/{(int)vehicleTotals.Sum()}";
                             LblWaspCamerasTotal.Text = $"/{(int)waspTotals.Sum()}";
                             LblGagsTotal.Text = $"/{(int)gagTotals.Sum()}";
                             LblMoviesTotal.Text = "/1";
+
                             for (uint i = 0; i < LevelCount; i++)
                             {
                                 uint levelMissions = 0;
                                 for (uint j = 0; j < 7; j++)
                                 {
-                                    levelMissions += SHARMem.MissionComplete(i, j);
+                                    if (SHARMem.MissionCompleted(i, j))
+                                        levelMissions++;
                                 }
                                 storyMissionTotal += levelMissions;
 
-                                uint levelBM = SHARMem.BonusMissionComplete(i);
+                                uint levelBM = SHARMem.BonusMissionCompleted(i) ? 1u : 0u;
                                 bonusMissionTotal += levelBM;
 
                                 uint levelRaces = 0;
                                 for (uint j = 0; j < 3; j++)
                                 {
-                                    levelRaces += SHARMem.StreetRaceComplete(i, j);
+                                    if (SHARMem.StreetRaceCompleted(i, j))
+                                        levelRaces++;
                                 }
                                 streetRaceTotal += levelRaces;
 
-                                uint levelCards = SHARMem.CollectorCardsCount(i);
+                                uint levelCards = 0;
+                                for (uint j = 0; j < 7; j++)
+                                {
+                                    if (SHARMem.CardCollected(i, j))
+                                        levelCards++;
+                                }
                                 collectorCardTotal += levelCards;
 
                                 uint levelClothing = SHARMem.CharacterClothingCount(i);
@@ -225,11 +265,50 @@ namespace SHARChecklist
                                 uint levelGags = SHARMem.GagsCount(i);
                                 gagsTotal += levelGags;
 
-                                float levelComplete = levelMissions / 7f + levelBM + levelRaces / 3f + levelClothing / 3f + levelVehicles / 5f + levelCards / 7f + levelWasps / waspTotals[i] + levelGags / gagTotals[i];
-                                levelComplete /= 8f;
+                                float levelComplete = 0;
+                                float divider = 0;
+
+                                levelComplete += levelMissions / 7f;
+                                divider++;
+
+                                levelComplete += levelBM;
+                                divider++;
+
+                                levelComplete += levelRaces / 3f;
+                                divider++;
+
+                                if (clothingTotals[i] != 0)
+                                {
+                                    levelComplete += levelClothing / clothingTotals[i];
+                                    divider++;
+                                }
+
+                                if (vehicleTotals[i] != 0)
+                                {
+                                    levelComplete += levelVehicles / vehicleTotals[i];
+                                    divider++;
+                                }
+
+                                levelComplete += levelCards / 7f;
+                                divider++;
+
+                                if (waspTotals[i] != 0)
+                                {
+                                    levelComplete += levelWasps / waspTotals[i];
+                                    divider++;
+                                }
+
+                                if (gagTotals[i] != 0)
+                                {
+                                    levelComplete += levelGags / gagTotals[i];
+                                    divider++;
+                                }
+
+                                levelComplete /= divider;
                                 levelsTotal += levelComplete * 100f;
                             }
-                            moviesTotal = SHARMem.BonusMovieWatched();
+                            moviesTotal = SHARMem.FMVUnlocked(2u) ? 1u : 0u;
+
                             LblStoryMissions.Text = storyMissionTotal.ToString();
                             LblBonusMissions.Text = bonusMissionTotal.ToString();
                             LblStreetRaces.Text = streetRaceTotal.ToString();
