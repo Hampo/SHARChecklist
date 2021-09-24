@@ -71,6 +71,10 @@ namespace SHARChecklist
 
 		public uint RewardManager => ReadUInt32(SelectAddress(0x6C8988, 0x6C8948, 0x6C8948, 0x6C8980));
 
+		public ulong StreetRaceRewardHash(uint Level) => ReadUInt64(ReadUInt32(RewardManager + 4 + 36 * Level) + 4);
+
+		public ulong BonusMissionRewardHash(uint Level) => ReadUInt64(ReadUInt32(RewardManager + 4 + 36 * Level + 4) + 4);
+
 		public uint MaxTokens(uint Level) => ReadUInt32(RewardManager + 4 + 36 * Level + 4 + 4 + 4 + 4 + 4 + 4);
 
 		public uint GagTotal(uint Level) => ReadUInt32(RewardManager + 4 + 36 * Level + 4 + 4 + 4 + 4 + 4 + 4 + 4);

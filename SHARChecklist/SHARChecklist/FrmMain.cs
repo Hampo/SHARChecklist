@@ -179,6 +179,8 @@ namespace SHARChecklist
                             float[] gagTotals = new float[LevelCount];
                             float[] clothingTotals = new float[LevelCount];
                             float[] vehicleTotals = new float[LevelCount];
+                            bool[] hasBonusReward = new bool[LevelCount];
+                            bool[] hasRaceReward = new bool[LevelCount];
                             for (uint i = 0; i < LevelCount; i++)
                             {
                                 waspTotals[i] = SHARMem.WaspTotal(i);
@@ -194,6 +196,15 @@ namespace SHARChecklist
                                     uint MerchandiseCount = SHARMem.MerchandiseCount(i);
                                     float clothingTotal = 0;
                                     float vehicleTotal = 0;
+
+                                    ulong bonusMissionHash = SHARMem.BonusMissionRewardHash(i);
+                                    ulong streetRaceHash = SHARMem.StreetRaceRewardHash(i);
+                                    hasBonusReward[i] = bonusMissionHash != 0;
+                                    hasRaceReward[i] = streetRaceHash != 0;
+                                    if (hasBonusReward[i])
+                                        vehicleTotal++;
+                                    if (hasRaceReward[i])
+                                        vehicleTotal++;
                                     for (uint j = 0; j < MerchandiseCount; j++)
                                     {
                                         switch (SHARMem.MerchandiseType(SHARMem.MerchandiseIndex(i, j)))
@@ -254,8 +265,9 @@ namespace SHARChecklist
                                 characterClothingTotal += levelClothing;
 
                                 uint levelVehicles = SHARMem.VehiclesCount(i);
-                                levelVehicles += levelBM;
-                                if (levelRaces == 3)
+                                if (hasBonusReward[i])
+                                    levelVehicles += levelBM;
+                                if (hasRaceReward[i] && levelRaces == 3)
                                     levelVehicles += 1;
                                 vehiclesTotal += levelVehicles;
 

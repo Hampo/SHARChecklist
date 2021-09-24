@@ -121,6 +121,13 @@ namespace SHARChecklist
 			return BitConverter.ToInt64(array, 0);
 		}
 
+		public ushort ReadUInt16(uint Address)
+		{
+			byte[] array = new byte[2];
+			Read(Address, array);
+			return BitConverter.ToUInt16(array, 0);
+		}
+
 		public uint ReadUInt32(uint Address)
 		{
 			byte[] array = new byte[4];
@@ -130,16 +137,9 @@ namespace SHARChecklist
 
 		public ulong ReadUInt64(uint Address)
 		{
-			byte[] array = new byte[4];
+			byte[] array = new byte[8];
 			Read(Address, array);
 			return BitConverter.ToUInt64(array, 0);
-		}
-
-		public ushort ReadUInt16(uint Address)
-		{
-			byte[] array = new byte[4];
-			Read(Address, array);
-			return BitConverter.ToUInt16(array, 0);
 		}
 
 		public IntPtr GetModuleBaseAddress(string ModuleName)
