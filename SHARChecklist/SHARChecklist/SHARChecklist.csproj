@@ -55,12 +55,6 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmSetLevelCount.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmSetLevelCount.Designer.cs">
-      <DependentUpon>FrmSetLevelCount.cs</DependentUpon>
-    </Compile>
     <Compile Include="ProcessMemory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,9 +62,6 @@
     <Compile Include="SHARMemory.cs" />
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FrmSetLevelCount.resx">
-      <DependentUpon>FrmSetLevelCount.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

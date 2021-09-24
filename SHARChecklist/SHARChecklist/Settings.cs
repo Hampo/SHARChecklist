@@ -18,7 +18,6 @@ namespace SHARChecklist
         public Point Location { get; set; }
         public FormBorderStyle BorderStyle { get; set; }
         public bool Topmost { get; set; }
-        public uint LevelCount { get; set; }
 
         public Settings()
         {
@@ -27,7 +26,6 @@ namespace SHARChecklist
             Location = new Point(rect.Width / 2 - s.Width / 2, rect.Height / 2 - s.Height / 2);
             BorderStyle = FormBorderStyle.FixedToolWindow;
             Topmost = false;
-            LevelCount = 7;
         }
 
         public static Settings Load()

@@ -35,7 +35,7 @@ namespace SHARChecklist
             this.CMSMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.topmostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.formBorderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LblPercentageCompleteLabel = new System.Windows.Forms.Label();
             this.LblStoryMissionsLabel = new System.Windows.Forms.Label();
@@ -57,7 +57,6 @@ namespace SHARChecklist
             this.LblWaspCameras = new System.Windows.Forms.Label();
             this.LblGags = new System.Windows.Forms.Label();
             this.LblMovies = new System.Windows.Forms.Label();
-            this.TmrUpdate = new System.Windows.Forms.Timer(this.components);
             this.LblStoryMissionsTotal = new System.Windows.Forms.Label();
             this.LblBonusMissionsTotal = new System.Windows.Forms.Label();
             this.LblStreetRacesTotal = new System.Windows.Forms.Label();
@@ -67,8 +66,6 @@ namespace SHARChecklist
             this.LblWaspCamerasTotal = new System.Windows.Forms.Label();
             this.LblGagsTotal = new System.Windows.Forms.Label();
             this.LblMoviesTotal = new System.Windows.Forms.Label();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.setLevelCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CMSMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,18 +87,16 @@ namespace SHARChecklist
             this.CMSMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.topmostToolStripMenuItem,
             this.formBorderToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.setLevelCountToolStripMenuItem,
             this.toolStripSeparator2,
             this.exitToolStripMenuItem});
             this.CMSMain.Name = "CMSMain";
-            this.CMSMain.Size = new System.Drawing.Size(157, 104);
+            this.CMSMain.Size = new System.Drawing.Size(181, 98);
             // 
             // topmostToolStripMenuItem
             // 
             this.topmostToolStripMenuItem.CheckOnClick = true;
             this.topmostToolStripMenuItem.Name = "topmostToolStripMenuItem";
-            this.topmostToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.topmostToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.topmostToolStripMenuItem.Text = "Topmost";
             this.topmostToolStripMenuItem.CheckedChanged += new System.EventHandler(this.topmostToolStripMenuItem_CheckedChanged);
             // 
@@ -111,19 +106,19 @@ namespace SHARChecklist
             this.formBorderToolStripMenuItem.CheckOnClick = true;
             this.formBorderToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.formBorderToolStripMenuItem.Name = "formBorderToolStripMenuItem";
-            this.formBorderToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.formBorderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.formBorderToolStripMenuItem.Text = "Form border";
             this.formBorderToolStripMenuItem.CheckedChanged += new System.EventHandler(this.formBorderToolStripMenuItem_CheckedChanged);
             // 
-            // toolStripSeparator1
+            // toolStripSeparator2
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(153, 6);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -347,11 +342,6 @@ namespace SHARChecklist
             this.LblMovies.Text = "0";
             this.LblMovies.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Ctrl_MouseDown);
             // 
-            // TmrUpdate
-            // 
-            this.TmrUpdate.Interval = 1000;
-            this.TmrUpdate.Tick += new System.EventHandler(this.TmrUpdate_Tick);
-            // 
             // LblStoryMissionsTotal
             // 
             this.LblStoryMissionsTotal.AutoSize = true;
@@ -451,18 +441,6 @@ namespace SHARChecklist
             this.LblMoviesTotal.Text = "/?";
             this.LblMoviesTotal.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Ctrl_MouseDown);
             // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(153, 6);
-            // 
-            // setLevelCountToolStripMenuItem
-            // 
-            this.setLevelCountToolStripMenuItem.Name = "setLevelCountToolStripMenuItem";
-            this.setLevelCountToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
-            this.setLevelCountToolStripMenuItem.Text = "Set Level Count";
-            this.setLevelCountToolStripMenuItem.Click += new System.EventHandler(this.setLevelCountToolStripMenuItem_Click);
-            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -504,6 +482,7 @@ namespace SHARChecklist
             this.Name = "FrmMain";
             this.Text = "SHAR Checklist";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMain_FormClosing);
+            this.Load += new System.EventHandler(this.FrmMain_Load);
             this.Shown += new System.EventHandler(this.FrmMain_Shown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Ctrl_MouseDown);
             this.CMSMain.ResumeLayout(false);
@@ -535,7 +514,6 @@ namespace SHARChecklist
         private System.Windows.Forms.Label LblWaspCameras;
         private System.Windows.Forms.Label LblGags;
         private System.Windows.Forms.Label LblMovies;
-        private System.Windows.Forms.Timer TmrUpdate;
         private System.Windows.Forms.Label LblStoryMissionsTotal;
         private System.Windows.Forms.Label LblBonusMissionsTotal;
         private System.Windows.Forms.Label LblStreetRacesTotal;
@@ -548,9 +526,7 @@ namespace SHARChecklist
         private System.Windows.Forms.ContextMenuStrip CMSMain;
         private System.Windows.Forms.ToolStripMenuItem topmostToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem formBorderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem setLevelCountToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }
