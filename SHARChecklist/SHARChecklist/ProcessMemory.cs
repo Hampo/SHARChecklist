@@ -13,25 +13,18 @@ namespace SHARChecklist
 	{
 		public Process Process;
 
-		private const int PROCESS_VM_OPERATION = 8;
+		private const int PROCESS_CREATE_THREAD = 0x0002;
+		private const int PROCESS_QUERY_INFORMATION = 0x0400;
+		private const int PROCESS_VM_OPERATION = 0x0008;
+		private const int PROCESS_VM_WRITE = 0x0020;
+		private const int PROCESS_VM_READ = 0x0010;
 
-		private const int PROCESS_VM_WRITE = 32;
+		private const uint MEM_COMMIT = 0x00001000;
+		private const uint MEM_RESERVE = 0x00002000;
+		private const uint MEM_RELEASE = 0x00008000;
+		private const uint PAGE_READWRITE = 4;
 
-		private const int PAGE_READWRITE = 4;
-
-		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern bool VirtualProtectEx(IntPtr hProcess, UIntPtr lpAddress, int dwSize, int flNewProtect, [Out] int lpflOldProtect);
-
-		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, IntPtr nSize, UIntPtr lpNumberOfBytesRead);
-
-		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern bool CloseHandle(IntPtr handle);
-
-		[DllImport("kernel32.dll", SetLastError = true)]
-		public static extern IntPtr LoadLibraryEx(string dllToLoad, IntPtr hFile, LoadLibraryFlags flags);
-
-		[System.Flags]
+		[Flags]
 		public enum LoadLibraryFlags : uint
 		{
 			DONT_RESOLVE_DLL_REFERENCES = 0x00000001,
@@ -46,6 +39,18 @@ namespace SHARChecklist
 		}
 
 		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool VirtualProtectEx(IntPtr hProcess, UIntPtr lpAddress, int dwSize, int flNewProtect, [Out] int lpflOldProtect);
+
+		[DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+		static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, uint dwFreeType);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool ReadProcessMemory(IntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer, IntPtr nSize, UIntPtr lpNumberOfBytesRead);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern IntPtr LoadLibraryEx(string dllToLoad, IntPtr hFile, LoadLibraryFlags flags);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern void FreeLibrary(IntPtr module);
 
 		[DllImport("kernel32.dll", EntryPoint = "GetProcAddress")]
@@ -53,6 +58,35 @@ namespace SHARChecklist
 
 		[DllImport("kernel32.dll", EntryPoint = "GetProcAddress")]
 		private extern static UIntPtr GetProcAddress(IntPtr hwnd, string procedureName);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+
+		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+		public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+		[DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+		static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, uint nSize, out UIntPtr lpNumberOfBytesWritten);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, uint nSize, out UIntPtr lpNumberOfBytesWritten);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		static extern bool GetExitCodeThread(IntPtr hHandle, out uint lpExitCode);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool CloseHandle(IntPtr handle);
+
+		private List<IntPtr> ASMFunctions = new List<IntPtr>();
 
 		public ProcessMemory(Process Process)
 		{
@@ -80,7 +114,7 @@ namespace SHARChecklist
 		{
 			checked
 			{
-				byte[] array = new byte[(int)(unchecked((long)Length) - 1L) + 1];
+				byte[] array = new byte[Length];
 				Read(Address, array);
 				return array;
 			}
@@ -141,18 +175,36 @@ namespace SHARChecklist
 			Read(Address, array);
 			return BitConverter.ToUInt64(array, 0);
 		}
+		private static string NullTerminate(string String)
+		{
+			int num = String.IndexOf('\0');
+			if (num == -1)
+				return String;
+
+			return String.Substring(0, num);
+		}
+
+		public string ReadString(uint Address, Encoding Encoding, uint maxLength=512)
+		{
+			return NullTerminate(Encoding.GetString(ReadBytes(Address, maxLength)));
+		}
 
 		public IntPtr GetModuleBaseAddress(string ModuleName)
-        {
+		{
 			ProcessModule hacksModule = Process.Modules.Cast<ProcessModule>().FirstOrDefault(x => x.ModuleName.Equals(ModuleName, StringComparison.OrdinalIgnoreCase));
 			return hacksModule == null ? IntPtr.Zero : hacksModule.BaseAddress;
 		}
 
+		private readonly Dictionary<string, Dictionary<uint, uint>> ordinalAddressCache = new Dictionary<string, Dictionary<uint, uint>>();
 		public uint GetModuleProcAddress(string ModuleName, uint Proc)
-        {
+		{
+			ModuleName = ModuleName.ToLower();
+			if (ordinalAddressCache.ContainsKey(ModuleName) && ordinalAddressCache[ModuleName].ContainsKey(Proc))
+				return ordinalAddressCache[ModuleName][Proc];
+
 			ProcessModule module = Process.Modules.Cast<ProcessModule>().FirstOrDefault(x => x.ModuleName.Equals(ModuleName, StringComparison.OrdinalIgnoreCase));
 			if (module == null)
-            {
+			{
 				Console.WriteLine($"Couldn't find module: {ModuleName}");
 				return 0;
 			}
@@ -175,14 +227,26 @@ namespace SHARChecklist
 			uint offset = (uint)(method.ToUInt32() - dll.ToInt32());
 
 			FreeLibrary(dll);
-			return (uint)(GetModuleBaseAddress(ModuleName).ToInt32() + offset);
+			uint address = (uint)(GetModuleBaseAddress(ModuleName).ToInt32() + offset);
+
+			if (!ordinalAddressCache.ContainsKey(ModuleName))
+				ordinalAddressCache[ModuleName] = new Dictionary<uint, uint>();
+
+			ordinalAddressCache[ModuleName][Proc] = address;
+
+			return address;
 		}
 
+		private readonly Dictionary<string, Dictionary<string, uint>> namedAddressCache = new Dictionary<string, Dictionary<string, uint>>();
 		public uint GetModuleProcAddress(string ModuleName, string Proc)
-        {
+		{
+			ModuleName = ModuleName.ToLower();
+			if (namedAddressCache.ContainsKey(ModuleName) && namedAddressCache[ModuleName].ContainsKey(Proc))
+				return namedAddressCache[ModuleName][Proc];
+
 			ProcessModule module = Process.Modules.Cast<ProcessModule>().FirstOrDefault(x => x.ModuleName.Equals(ModuleName, StringComparison.OrdinalIgnoreCase));
 			if (module == null)
-            {
+			{
 				Console.WriteLine($"Couldn't find module: {ModuleName}");
 				return 0;
 			}
@@ -205,12 +269,190 @@ namespace SHARChecklist
 			uint offset = (uint)(method.ToUInt32() - dll.ToInt32());
 
 			FreeLibrary(dll);
-			return (uint)(GetModuleBaseAddress(ModuleName).ToInt32() + offset);
+			uint address = (uint)(GetModuleBaseAddress(ModuleName).ToInt32() + offset);
+
+			if (!namedAddressCache.ContainsKey(ModuleName))
+				namedAddressCache[ModuleName] = new Dictionary<string, uint>();
+
+			namedAddressCache[ModuleName][Proc] = address;
+
+			return address;
 		}
 
-        public void Dispose()
-        {
+		protected void Inject(string path)
+		{
+			IntPtr procHandle = IntPtr.Zero;
+			IntPtr allocMemAddress = IntPtr.Zero;
+			IntPtr hThread = IntPtr.Zero;
+			try
+			{
+				procHandle = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false, Process.Id);
+				if (procHandle == IntPtr.Zero)
+					throw new Win32Exception();
+
+
+				UIntPtr loadLibraryAddr = GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryW");
+				byte[] pathBytes = Encoding.Unicode.GetBytes(path + '\0');
+				uint pathLength = (uint)pathBytes.Length;
+				allocMemAddress = VirtualAllocEx(procHandle, IntPtr.Zero, pathLength, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+				if (allocMemAddress == IntPtr.Zero)
+					throw new Win32Exception();
+
+				if (!WriteProcessMemory(procHandle, allocMemAddress, pathBytes, pathLength, out _))
+					throw new Win32Exception();
+
+				hThread = CreateRemoteThread(procHandle, IntPtr.Zero, 0, (IntPtr)loadLibraryAddr.ToUInt32(), allocMemAddress, 0, IntPtr.Zero);
+				if (hThread == IntPtr.Zero)
+					throw new Win32Exception();
+
+				if (WaitForSingleObject(hThread, 0xFFFFFFFF) == 0xFFFFFFFF)
+					throw new Win32Exception();
+			}
+			finally
+			{
+				if (hThread != IntPtr.Zero)
+					if (!CloseHandle(hThread))
+						throw new Win32Exception();
+
+				if (allocMemAddress != IntPtr.Zero)
+					if(!VirtualFreeEx(procHandle, allocMemAddress, 0, MEM_RELEASE))
+						throw new Win32Exception();
+
+				if (procHandle != IntPtr.Zero)
+					if (!CloseHandle(procHandle))
+						throw new Win32Exception();
+			}
+		}
+
+		protected uint Execute(IntPtr Address, object Parameter)
+		{
+			IntPtr procHandle = IntPtr.Zero;
+			IntPtr allocMemAddress = IntPtr.Zero;
+			IntPtr hThread = IntPtr.Zero;
+			IntPtr paramsMemory = IntPtr.Zero;
+			try
+			{
+				procHandle = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false, Process.Id);
+				if (procHandle == IntPtr.Zero)
+					throw new Win32Exception();
+
+				uint paramsSize = (uint)Marshal.SizeOf(Parameter);
+				paramsMemory = Marshal.AllocHGlobal((int)paramsSize);
+				Marshal.StructureToPtr(Parameter, paramsMemory, false);
+
+				allocMemAddress = VirtualAllocEx(procHandle, IntPtr.Zero, paramsSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+				if (allocMemAddress == IntPtr.Zero)
+					throw new Win32Exception();
+
+				if (!WriteProcessMemory(procHandle, allocMemAddress, paramsMemory, paramsSize, out _))
+					throw new Win32Exception();
+
+				hThread = CreateRemoteThread(procHandle, IntPtr.Zero, 0, Address, allocMemAddress, 0, IntPtr.Zero);
+				if (hThread == IntPtr.Zero)
+					throw new Win32Exception();
+
+				if (WaitForSingleObject(hThread, 0xFFFFFFFF) == 0xFFFFFFFF)
+					throw new Win32Exception();
+
+				if (!GetExitCodeThread(hThread, out uint retVal))
+					throw new Win32Exception();
+
+				return retVal;
+			}
+			finally
+			{
+				if (paramsMemory != IntPtr.Zero)
+					Marshal.FreeHGlobal(paramsMemory);
+
+				if (hThread != IntPtr.Zero)
+					if (!CloseHandle(hThread))
+						throw new Win32Exception();
+
+				if (allocMemAddress != IntPtr.Zero)
+					if(!VirtualFreeEx(procHandle, allocMemAddress, 0, MEM_RELEASE))
+						throw new Win32Exception();
+
+				if (procHandle != IntPtr.Zero)
+					if (!CloseHandle(procHandle))
+						throw new Win32Exception();
+			}
+		}
+
+		protected uint Execute(byte[] Bytes, object Parameter)
+		{
+			IntPtr procHandle = IntPtr.Zero;
+			IntPtr funcMemoryAddress = IntPtr.Zero;
+			try
+			{
+				procHandle = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false, Process.Id);
+				if (procHandle == IntPtr.Zero)
+					throw new Win32Exception();
+
+				uint funcSize = (uint)Bytes.Length;
+				funcMemoryAddress = VirtualAllocEx(procHandle, IntPtr.Zero, funcSize, MEM_COMMIT | MEM_RESERVE, 0x40);
+				if (funcMemoryAddress == IntPtr.Zero)
+					throw new Win32Exception();
+
+				return Execute(funcMemoryAddress, Parameter);
+			}
+			finally
+			{
+				if (funcMemoryAddress != IntPtr.Zero)
+					if (!VirtualFreeEx(procHandle, funcMemoryAddress, 0, MEM_RELEASE))
+						throw new Win32Exception();
+
+				if (procHandle != IntPtr.Zero)
+					if (!CloseHandle(procHandle))
+						throw new Win32Exception();
+			}
+		}
+
+		protected IntPtr InjectFunction(byte[] Bytes)
+		{
+			IntPtr procHandle = IntPtr.Zero;
+			try
+			{
+				procHandle = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false, Process.Id);
+				if (procHandle == IntPtr.Zero)
+					throw new Win32Exception();
+
+				uint funcSize = (uint)Bytes.Length;
+				IntPtr funcMemoryAddress = VirtualAllocEx(procHandle, IntPtr.Zero, funcSize, MEM_COMMIT | MEM_RESERVE, 0x40);
+
+				if (funcMemoryAddress == IntPtr.Zero)
+					throw new Win32Exception();
+
+				if (!WriteProcessMemory(procHandle, funcMemoryAddress, Bytes, funcSize, out _))
+					throw new Win32Exception();
+
+				ASMFunctions.Add(funcMemoryAddress);
+				return funcMemoryAddress;
+			}
+			finally
+			{
+				if (procHandle != IntPtr.Zero)
+					if (!CloseHandle(procHandle))
+						throw new Win32Exception();
+			}
+		}
+
+		public void Dispose()
+		{
+			IntPtr procHandle = IntPtr.Zero;
+			try
+			{
+				procHandle = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false, Process.Id);
+				if (procHandle != IntPtr.Zero)
+					foreach (IntPtr Address in ASMFunctions)
+						if (Address != IntPtr.Zero)
+							VirtualFreeEx(procHandle, Address, 0, MEM_RELEASE);
+			}
+			finally
+			{
+				if (procHandle != IntPtr.Zero)
+					CloseHandle(procHandle);
+			}
 			Process.Dispose();
-        }
-    }
+		}
+	}
 }

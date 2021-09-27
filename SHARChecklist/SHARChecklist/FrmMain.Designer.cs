@@ -66,6 +66,7 @@ namespace SHARChecklist
             this.LblWaspCamerasTotal = new System.Windows.Forms.Label();
             this.LblGagsTotal = new System.Windows.Forms.Label();
             this.LblMoviesTotal = new System.Windows.Forms.Label();
+            this.TmrUpdate = new System.Windows.Forms.Timer(this.components);
             this.CMSMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,13 +91,13 @@ namespace SHARChecklist
             this.toolStripSeparator2,
             this.exitToolStripMenuItem});
             this.CMSMain.Name = "CMSMain";
-            this.CMSMain.Size = new System.Drawing.Size(181, 98);
+            this.CMSMain.Size = new System.Drawing.Size(141, 76);
             // 
             // topmostToolStripMenuItem
             // 
             this.topmostToolStripMenuItem.CheckOnClick = true;
             this.topmostToolStripMenuItem.Name = "topmostToolStripMenuItem";
-            this.topmostToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.topmostToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.topmostToolStripMenuItem.Text = "Topmost";
             this.topmostToolStripMenuItem.CheckedChanged += new System.EventHandler(this.topmostToolStripMenuItem_CheckedChanged);
             // 
@@ -106,19 +107,19 @@ namespace SHARChecklist
             this.formBorderToolStripMenuItem.CheckOnClick = true;
             this.formBorderToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.formBorderToolStripMenuItem.Name = "formBorderToolStripMenuItem";
-            this.formBorderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.formBorderToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.formBorderToolStripMenuItem.Text = "Form border";
             this.formBorderToolStripMenuItem.CheckedChanged += new System.EventHandler(this.formBorderToolStripMenuItem_CheckedChanged);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(137, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -441,6 +442,11 @@ namespace SHARChecklist
             this.LblMoviesTotal.Text = "/?";
             this.LblMoviesTotal.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Ctrl_MouseDown);
             // 
+            // TmrUpdate
+            // 
+            this.TmrUpdate.Interval = 1000;
+            this.TmrUpdate.Tick += new System.EventHandler(this.TmrUpdate_Tick);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -528,6 +534,7 @@ namespace SHARChecklist
         private System.Windows.Forms.ToolStripMenuItem formBorderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.Timer TmrUpdate;
     }
 }
 

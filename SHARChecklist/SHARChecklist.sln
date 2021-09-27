@@ -5,16 +5,22 @@ VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SHARChecklist", "SHARChecklist\SHARChecklist.csproj", "{D06C976D-6B19-46D5-833E-83E9AD6D3299}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SHARFuncs", "SHARFuncs\SHARFuncs.vcxproj", "{D6272C88-EC8A-4160-8489-833BA0D7BDD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D06C976D-6B19-46D5-833E-83E9AD6D3299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D06C976D-6B19-46D5-833E-83E9AD6D3299}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D06C976D-6B19-46D5-833E-83E9AD6D3299}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D06C976D-6B19-46D5-833E-83E9AD6D3299}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D06C976D-6B19-46D5-833E-83E9AD6D3299}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D06C976D-6B19-46D5-833E-83E9AD6D3299}.Debug|x86.Build.0 = Debug|Any CPU
+		{D06C976D-6B19-46D5-833E-83E9AD6D3299}.Release|x86.ActiveCfg = Release|Any CPU
+		{D06C976D-6B19-46D5-833E-83E9AD6D3299}.Release|x86.Build.0 = Release|Any CPU
+		{D6272C88-EC8A-4160-8489-833BA0D7BDD7}.Debug|x86.ActiveCfg = Debug|Win32
+		{D6272C88-EC8A-4160-8489-833BA0D7BDD7}.Debug|x86.Build.0 = Debug|Win32
+		{D6272C88-EC8A-4160-8489-833BA0D7BDD7}.Release|x86.ActiveCfg = Release|Win32
+		{D6272C88-EC8A-4160-8489-833BA0D7BDD7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
