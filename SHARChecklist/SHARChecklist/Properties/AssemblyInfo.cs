@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SHARChecklist")]
 [assembly: AssemblyDescription("A simple application designed to help the 100% Simpsons: Hit & Run speedrun.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ZHBot")]
+[assembly: AssemblyCompany("Donut Team")]
 [assembly: AssemblyProduct("SHARChecklist")]
-[assembly: AssemblyCopyright("Copyright © ZHBot 2021")]
+[assembly: AssemblyCopyright("Copyright © Donut Team 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.4.0.0")]
-[assembly: AssemblyFileVersion("1.4.0.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]

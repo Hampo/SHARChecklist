@@ -1,0 +1,3 @@
+[submodule "SHARMemory"]
+	path = SHARMemory
+	url = https://github.com/Hampo/SHARMemory.git

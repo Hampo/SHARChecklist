@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>SHARChecklist</RootNamespace>
     <AssemblyName>SHARChecklist</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -57,11 +57,9 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProcessMemory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="SHARMemory.cs" />
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -90,6 +88,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="256x256.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SHARMemory\SHARMemory\SHARMemory\SHARMemory.csproj">
+      <Project>{6342f838-8cea-4f3d-9366-01d2eb04863f}</Project>
+      <Name>SHARMemory</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
