@@ -248,7 +248,7 @@ namespace SHARChecklist
 					uint levelMissions = 0;
 					for (int mission = 0; mission < 7; mission++)
 					{
-						if (levelRecord.Missions.List[mission].Completed)
+						if (levelRecord.Missions.List[mission + (level == 0 ? 1 : 0)].Completed)
 							levelMissions++;
 					}
 					storyMissionTotal += levelMissions;
