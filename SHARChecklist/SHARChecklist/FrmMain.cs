@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -182,9 +181,23 @@ namespace SHARChecklist
 						float clothingTotal = 0;
 						float vehicleTotal = 0;
 
-						var levelMerchandises = rewardsManager.LevelTokenStoreList[level].Merchandises.ToArray();
+						/*var levelMerchandises = rewardsManager.LevelTokenStoreList[level].Merchandises.ToArray();
 						foreach (var merchandise in levelMerchandises)
 						{
+							switch (merchandise.RewardType)
+							{
+								case SHARMemory.SHAR.Classes.Reward.RewardTypes.SkinOther:
+									clothingTotal++;
+									break;
+								case SHARMemory.SHAR.Classes.Reward.RewardTypes.PlayerCar:
+									vehicleTotal++;
+									break;
+							}
+						}*/
+						var merchandiseCount = rewardsManager.LevelTokenStoreList[level].Counter;
+                        for (uint merchandiseIndex = 0; merchandiseIndex < merchandiseCount; merchandiseIndex++)
+						{
+							var merchandise = SHARMem.Functions.GetMerchandise((uint)level, merchandiseIndex);
 							switch (merchandise.RewardType)
 							{
 								case SHARMemory.SHAR.Classes.Reward.RewardTypes.SkinOther:
