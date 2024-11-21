@@ -40,7 +40,7 @@ namespace SHARChecklist
 			}
 		}
 
-		private void resetStats()
+		private void ResetStats()
 		{
 			LblPercentageComplete.Text = "0%";
 			LblStoryMissions.Text = "0";
@@ -64,19 +64,19 @@ namespace SHARChecklist
 			LblMoviesTotal.Text = "/?";
 		}
 
-		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		private void TSMIExit_Click(object sender, EventArgs e)
 		{
 			Close();
 		}
 
-		private void topmostToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+		private void TSMITopmost_CheckedChanged(object sender, EventArgs e)
 		{
-			TopMost = topmostToolStripMenuItem.Checked;
+			TopMost = TSMITopmost.Checked;
 		}
 
-		private void formBorderToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+		private void TSMIFormBorder_CheckedChanged(object sender, EventArgs e)
 		{
-			FormBorderStyle = formBorderToolStripMenuItem.Checked ? FormBorderStyle.FixedToolWindow : FormBorderStyle.None;
+			FormBorderStyle = TSMIFormBorder.Checked ? FormBorderStyle.FixedToolWindow : FormBorderStyle.None;
 		}
 
 		private void FrmMain_Load(object sender, EventArgs e)
@@ -86,10 +86,7 @@ namespace SHARChecklist
 
 		private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (SHARMem != null)
-			{
-				SHARMem.Dispose();
-			}
+			SHARMem?.Dispose();
 			if (S != null)
 			{
 				S.Location = Location;
@@ -103,8 +100,8 @@ namespace SHARChecklist
 		{
 			S = Settings.Load();
 			Location = S.Location;
-			formBorderToolStripMenuItem.Checked = S.BorderStyle == FormBorderStyle.FixedToolWindow;
-			topmostToolStripMenuItem.Checked = S.Topmost;
+			TSMIFormBorder.Checked = S.BorderStyle == FormBorderStyle.FixedToolWindow;
+			TSMITopmost.Checked = S.Topmost;
 			TmrUpdate.Start();
 		}
 
@@ -122,7 +119,7 @@ namespace SHARChecklist
 			if (SHARMem == null)
             {
                 SHARMem = null;
-                resetStats();
+                ResetStats();
 
 				var p = SHARMemory.SHAR.Memory.GetSHARProcess();
                 if (p == null)
@@ -135,7 +132,7 @@ namespace SHARChecklist
             {
                 SHARMem.Dispose();
                 SHARMem = null;
-                resetStats();
+                ResetStats();
 
                 LevelCount = 0;
                 waspTotals = null;
@@ -150,7 +147,7 @@ namespace SHARChecklist
 			var context = SHARMem.Singletons.GameFlow?.CurrentContext;
             if (context == null || context == SHARMemory.SHAR.Classes.GameFlow.GameState.PreLicence || context == SHARMemory.SHAR.Classes.GameFlow.GameState.Licence)
 			{
-				resetStats();
+				ResetStats();
 				return;
 			}
 
@@ -341,7 +338,7 @@ namespace SHARChecklist
 			}
 			catch (Exception ex)
 			{
-				resetStats();
+				ResetStats();
 				Console.WriteLine(ex.ToString());
 			}
 		}

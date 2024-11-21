@@ -33,10 +33,10 @@ namespace SHARChecklist
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.LblCredits = new System.Windows.Forms.Label();
             this.CMSMain = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.topmostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.formBorderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMITopmost = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMIFormBorder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMIExit = new System.Windows.Forms.ToolStripMenuItem();
             this.LblPercentageCompleteLabel = new System.Windows.Forms.Label();
             this.LblStoryMissionsLabel = new System.Windows.Forms.Label();
             this.LblBonusMissionsLabel = new System.Windows.Forms.Label();
@@ -86,30 +86,30 @@ namespace SHARChecklist
             // CMSMain
             // 
             this.CMSMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.topmostToolStripMenuItem,
-            this.formBorderToolStripMenuItem,
+            this.TSMITopmost,
+            this.TSMIFormBorder,
             this.toolStripSeparator2,
-            this.exitToolStripMenuItem});
+            this.TSMIExit});
             this.CMSMain.Name = "CMSMain";
             this.CMSMain.Size = new System.Drawing.Size(141, 76);
             // 
             // topmostToolStripMenuItem
             // 
-            this.topmostToolStripMenuItem.CheckOnClick = true;
-            this.topmostToolStripMenuItem.Name = "topmostToolStripMenuItem";
-            this.topmostToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
-            this.topmostToolStripMenuItem.Text = "Topmost";
-            this.topmostToolStripMenuItem.CheckedChanged += new System.EventHandler(this.topmostToolStripMenuItem_CheckedChanged);
+            this.TSMITopmost.CheckOnClick = true;
+            this.TSMITopmost.Name = "topmostToolStripMenuItem";
+            this.TSMITopmost.Size = new System.Drawing.Size(140, 22);
+            this.TSMITopmost.Text = "Topmost";
+            this.TSMITopmost.CheckedChanged += new System.EventHandler(this.TSMITopmost_CheckedChanged);
             // 
             // formBorderToolStripMenuItem
             // 
-            this.formBorderToolStripMenuItem.Checked = true;
-            this.formBorderToolStripMenuItem.CheckOnClick = true;
-            this.formBorderToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.formBorderToolStripMenuItem.Name = "formBorderToolStripMenuItem";
-            this.formBorderToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
-            this.formBorderToolStripMenuItem.Text = "Form border";
-            this.formBorderToolStripMenuItem.CheckedChanged += new System.EventHandler(this.formBorderToolStripMenuItem_CheckedChanged);
+            this.TSMIFormBorder.Checked = true;
+            this.TSMIFormBorder.CheckOnClick = true;
+            this.TSMIFormBorder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.TSMIFormBorder.Name = "formBorderToolStripMenuItem";
+            this.TSMIFormBorder.Size = new System.Drawing.Size(140, 22);
+            this.TSMIFormBorder.Text = "Form border";
+            this.TSMIFormBorder.CheckedChanged += new System.EventHandler(this.TSMIFormBorder_CheckedChanged);
             // 
             // toolStripSeparator2
             // 
@@ -118,10 +118,10 @@ namespace SHARChecklist
             // 
             // exitToolStripMenuItem
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.TSMIExit.Name = "exitToolStripMenuItem";
+            this.TSMIExit.Size = new System.Drawing.Size(140, 22);
+            this.TSMIExit.Text = "Exit";
+            this.TSMIExit.Click += new System.EventHandler(this.TSMIExit_Click);
             // 
             // LblPercentageCompleteLabel
             // 
@@ -530,9 +530,9 @@ namespace SHARChecklist
         private System.Windows.Forms.Label LblGagsTotal;
         private System.Windows.Forms.Label LblMoviesTotal;
         private System.Windows.Forms.ContextMenuStrip CMSMain;
-        private System.Windows.Forms.ToolStripMenuItem topmostToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem formBorderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem TSMITopmost;
+        private System.Windows.Forms.ToolStripMenuItem TSMIFormBorder;
+        private System.Windows.Forms.ToolStripMenuItem TSMIExit;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.Timer TmrUpdate;
     }
