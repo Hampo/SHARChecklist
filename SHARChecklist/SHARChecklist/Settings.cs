@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
@@ -22,7 +18,7 @@ namespace SHARChecklist
 		public Settings()
 		{
 			Rectangle rect = Screen.PrimaryScreen.WorkingArea;
-			Size s = Application.OpenForms[0].Size;
+			Size s = new Size(217, 276);// Application.OpenForms[0].Size;
 			Location = new Point(rect.Width / 2 - s.Width / 2, rect.Height / 2 - s.Height / 2);
 			BorderStyle = FormBorderStyle.FixedToolWindow;
 			Topmost = false;
@@ -50,7 +46,7 @@ namespace SHARChecklist
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Error loading settings file:" + Environment.NewLine + ex.ToString(), "Error loading settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show($"Error loading settings file:\n{ex}", "Error loading settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
 			return new Settings();
@@ -71,7 +67,7 @@ namespace SHARChecklist
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Error saving settings file:" + Environment.NewLine + ex.ToString(), "Error saving settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show($"Error saving settings file:\n{ex}", "Error saving settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 	}

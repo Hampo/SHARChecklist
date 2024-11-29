@@ -7,6 +7,7 @@ namespace SHARChecklist
 	public partial class FrmMain : Form
 	{
 		private static readonly string Version;
+		private static readonly Settings S = null;
 		
 		static FrmMain()
 		{
@@ -14,8 +15,8 @@ namespace SHARChecklist
 			while (version.EndsWith(".0"))
 				version = version.Substring(0, version.Length - 2);
 			Version = version;
+            S = Settings.Load();
         }
-		public static Settings S = null;
 
 		public FrmMain()
 		{
@@ -97,7 +98,6 @@ namespace SHARChecklist
 
 		private void FrmMain_Shown(object sender, EventArgs e)
 		{
-			S = Settings.Load();
 			Location = S.Location;
 			TSMIFormBorder.Checked = S.BorderStyle == FormBorderStyle.FixedToolWindow;
 			TSMITopmost.Checked = S.Topmost;
@@ -127,7 +127,13 @@ namespace SHARChecklist
 				SHARMem = new SHARMemory.SHAR.Memory(p);
             }
 
-			if (!SHARMem.IsRunning)
+			bool running = false;
+			try
+			{
+				running = SHARMem.IsRunning;
+			} catch { }
+
+			if (!running)
             {
                 SHARMem.Dispose();
                 SHARMem = null;
